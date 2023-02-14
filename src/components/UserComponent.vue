@@ -4,8 +4,9 @@
             @click="openMenu = !openMenu"
             data-tooltip-target="tooltip-no-arrow-user"
 			data-tooltip-placement="bottom"
-            src="https://via.placeholder.com/40"
+            :src="userStore.picture"
             class="rounded-full w-8 cursor-pointer"
+            alt="user profile"
         >
         <div
             v-show="!openMenu"
@@ -15,25 +16,25 @@
         >
             <div>Google Account</div>
             <div class="text-gray-300">
-                Usman Ali
+                {{ userStore.firstName }} {{ userStore.lastName }}
             </div>
-            <div>usman@gmail.com</div>
+            <div>{{ userStore.email }}</div>
         </div>
-        <div v-show="openMenu" class="absolute z-10 w-80 right-2 bg-white top-14 rounded-lg">
+        <div v-show="openMenu" class="custom-shadow absolute z-10 w-80 right-2 bg-white top-14 rounded-lg">
             <div class="w-full flex justify-center">
                 <img
-                    src="https://via.placeholder.com/70"
+                    :src="userStore.picture"
                     class="rounded-full w-20 mt-4"
                 >
             </div>
             <div class="text-gray-700 w-full flex justify-center mt-2 text-lg">
-                Usman Ali
+                {{ userStore.firstName }} {{ userStore.lastName }}
             </div>
             <div class="text-gray-700 w-full flex justify-center mt-2 text-sm pb-4 border-b">
-                usman@gmail.com
+                {{ userStore.email }}
             </div>
             <div class="flex justify-center my-5">
-                <button class="bg-transparent text-xs hover:bg-gray-100 text-gray-600 font-semibold py-2 px-4">
+                <button @click="logout" class="bg-transparent text-xs hover:bg-gray-100 text-gray-600 font-semibold py-2 px-4">
                     Sign out of Gmail
                 </button>
             </div>
@@ -43,7 +44,26 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useUserStore } from '@/store/user-store';
+import { useRouter } from 'vue-router';
+
+const userStore = useUserStore();
+const router = useRouter();
 
 let openMenu = ref(false);
 
+const logout = () => {
+    userStore.clearUser();
+    setTimeout(() => { router.push('/') }, 200)
+}
 </script>
+
+<style lang="scss">
+#UserComponent {
+    .custom-shadow {
+        box-shadow: -1px 1px 6px -2px rgba(36, 36, 36, 0.58);
+        -webkit-box-shadow: -1px 1px 6px -2px rgba(36, 36, 36, 0.58);
+        -moz-box-shadow: -1px 1px 6px -2px rgba(36, 36, 36, 0.58);
+    }
+}
+</style>

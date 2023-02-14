@@ -69,17 +69,19 @@
 
                 <div class="my-5"></div>
 
-                <div class="side-menu-item flex justify-between px-6 py-1.5 bg-blue-100 rounded-r-full">
-                    <div class="flex items-center">
-                        <InboxIcon :size="17" />
-                        <div class="flex-sm pl-4 font-semibold">
-                            Inbox
+                <router-link to="/email">
+                    <div class="side-menu-item flex justify-between px-6 py-1.5 bg-blue-100 rounded-r-full">
+                        <div class="flex items-center">
+                            <InboxIcon :size="17" />
+                            <div class="flex-sm pl-4 font-semibold">
+                                Inbox
+                            </div>
+                        </div>
+                        <div class="text-xs font-semibold">
+                            {{ userStore.emails.length }}
                         </div>
                     </div>
-                    <div class="text-xs font-semibold">
-                        26
-                    </div>
-                </div>
+                </router-link>
 
                 <div class="flex justify-between px-6 py-1.5">
                     <div class="flex items-center">
@@ -156,22 +158,22 @@
             <div>
                 <div class="relative flex items-center px-3.5 py-2">
                     <div class="text-sm text-gray-700">To</div>
-                    <input type="text" class="w-full h-6 border-transparent border-none focus:ring-0 outline-none">
+                    <input v-model="toEmail" type="text" class="w-full h-6 border-transparent border-none focus:ring-0 outline-none">
                     <div class="absolute border-b bottom-0 w-[calc(100%-30px)]"></div>
                 </div> 
                 <div class="relative flex items-center px-3.5 py-2">
                     <div class="text-sm text-gray-700">Subject</div>
-                    <input type="text" class="w-full h-6 border-transparent border-none focus:ring-0 outline-none">
+                    <input v-model="subject" type="text" class="w-full h-6 border-transparent border-none focus:ring-0 outline-none">
                     <div class="absolute border-b bottom-0 w-[calc(100%-30px)]"></div>
                 </div>  
             </div>
 
             <div class="m-3">
-                <textarea class="w-full border-transparent border-none focus:right-0 outline-none" style="resize:none" rows="14"></textarea>
+                <textarea v-model="body" class="w-full border-transparent border-none focus:right-0 outline-none" style="resize:none" rows="14"></textarea>
             </div>
 
             <div class="p-4 mt-5">
-                <button class="bg-blue-700 hover:bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-full">Send Message</button>
+                <button @click="sendEmail" class="bg-blue-700 hover:bg-blue-600 text-white text-sm font-bold py-2 px-4 rounded-full">Send Message</button>
             </div>
 
         </div>
@@ -191,8 +193,27 @@ import SendOutlineIcon from 'vue-material-design-icons/SendOutline.vue';
 import PlusIcon from 'vue-material-design-icons/Plus.vue';
 import CloseIcon from 'vue-material-design-icons/Close.vue';
 import { ref } from 'vue';
+import { useUserStore } from '@/store/user-store';
+const userStore = useUserStore()
 
-let newMessageOpen = ref(false)
+
+let newMessageOpen = ref(false);
+let toEmail = ref('');
+let subject = ref('');
+let body = ref('');
+
+const sendEmail = async () => {
+    await userStore.sendEmail({
+        toEmail: toEmail.value,
+        subject: subject.value,
+        body:  body.value
+    });
+
+    newMessageOpen.value = false;
+    toEmail.value = '';
+    subject.value = '';
+    body.value = '';
+}
 
 </script>
 
